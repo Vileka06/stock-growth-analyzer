@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ company }} - Top 5 Stock Analysis</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Market Pulse</div>
+        <a href="/">Back to Top 5</a>
+    </nav>
+
+    <div detail-container>
+        <div class="stock-header">
+            <h2>{{ company }} ({{ symbol }})</h2>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Company</div>
+                <div class="metric-value">{{ company }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Symbol</div>
+                <div class="metric-value">{{ symbol }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Latest Close</div>
+                <div class="metric-value">${{ "%.2f"| format(latest_close) }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">First Close</div>
+                <div class="metric-value">${{ "%.2f"| format(first_close) }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Price Change</div>
+                <div class="metric-value ${{ "positive" if price_change >= 0 else "negative" }}">${{ "%.2f"| format(price_change) }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">% Change</div>
+                <div class="metric-value ${{ "positive" if pct_change >= 0 else "negative" }}">{{ "%.2f"| format(pct_change) }}%</div>
+            </div>
+        </div>
+
+        <div class="data-table">
+            <h3>All CSV Data</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Open</th>
+                        <th>High</th>
+                        <th>Low</th>
+                        <th>Close</th>
+                        <th>Volume</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in range(dates|length) %}
+                    <tr>
+                        <td>{{ dates[i].strftime('%Y-%m-%d') }}</td>
+                        <td>${{ "%.2f"| format(opens[i] if i < opens|length else 0) }}</td>
+                        <td>${{ "%.2f"| format(highs[i] if i < highs|length else 0) }}</td>
+                        <td>${{ "%.2f"| format(lows[i] if i < lows|length else 0) }}</td>
+                        <td>${{ "%.2f"| format(closes[i] if i < closes|length else 0) }}</td>
+                        <td>{{ volumes[i] if i < volumes|length else 0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="canvas-section">
+            <h3>Closing Price Timeline</h3>
+            <canvas id="closeChart"></canvas>
+        </div>
+    </detail-container>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

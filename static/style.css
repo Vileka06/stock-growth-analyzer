@@ -1,0 +1,308 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #071521;
+    color: #e8f0f5;
+}
+
+.container {
+    width: 92%;
+    max-width: 1250px;
+    margin: auto;
+    padding: 35px 0;
+}
+
+
+/* Header */
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    margin: 0;
+    color: #00e5c3;
+    font-size: 32px;
+}
+
+header p {
+    color: #8da3b5;
+    margin-top: 8px;
+}
+
+
+/* Refresh */
+
+.refresh-btn {
+    background: #00c9a7;
+    color: #03100f;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.refresh-btn:hover {
+    opacity: 0.85;
+}
+
+
+/* Winner */
+
+.winner-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 25px;
+
+    margin-bottom: 25px;
+
+    border-radius: 15px;
+
+    background: linear-gradient(
+        135deg,
+        #102d43,
+        #123e53
+    );
+
+    border: 1px solid #1b5069;
+}
+
+.small-title {
+    color: #00e5a8;
+    font-size: 14px;
+}
+
+.winner-card h2 {
+    margin: 8px 0 3px;
+}
+
+.winner-card p {
+    margin: 0;
+    color: #91a9b9;
+}
+
+.winner-growth {
+    font-size: 36px;
+    font-weight: bold;
+    color: #00e5a8;
+}
+
+
+/* Cards */
+
+.card {
+    background: #0c1f2d;
+    border: 1px solid #183548;
+    border-radius: 14px;
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+
+/* Section title */
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-title h2 {
+    margin: 0;
+}
+
+.section-title span,
+.section-title p {
+    color: #8299aa;
+}
+
+
+/* Table */
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    padding: 16px;
+
+    background: #102b3d;
+
+    color: #7f9eb3;
+
+    font-size: 13px;
+}
+
+td {
+    padding: 17px 16px;
+
+    border-bottom: 1px solid #193546;
+}
+
+tr:hover {
+    background: #102838;
+}
+
+.rank {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #12384f;
+    color: #00e5c3;
+
+    font-weight: bold;
+}
+
+.symbol {
+    color: #00d8c0;
+    font-weight: bold;
+}
+
+td small {
+    display: block;
+    color: #71899a;
+    margin-top: 4px;
+}
+
+.growth {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.positive {
+    color: #00e5a8;
+}
+
+.negative {
+    color: #ff637d;
+}
+
+.status {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.positive-bg {
+    background: rgba(0, 229, 168, 0.12);
+    color: #00e5a8;
+}
+
+.negative-bg {
+    background: rgba(255, 99, 125, 0.12);
+    color: #ff637d;
+}
+
+
+/* Chart */
+
+.chart-card {
+    padding-bottom: 30px;
+}
+
+.chart-container {
+    position: relative;
+    height: 450px;
+    width: 100%;
+}
+
+
+/* Formula */
+
+.calculation {
+    background: #0c1f2d;
+    border: 1px solid #183548;
+    border-radius: 14px;
+
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.calculation h3 {
+    color: #00e5c3;
+}
+
+.formula {
+    background: #071521;
+    padding: 18px;
+    border-radius: 8px;
+
+    font-family: monospace;
+    font-size: 17px;
+
+    color: #00e5a8;
+
+    margin: 15px 0;
+}
+
+.note {
+    color: #8097a8;
+    font-size: 14px;
+}
+
+
+/* Error */
+
+.error {
+    padding: 25px;
+    text-align: center;
+    color: #ff637d;
+}
+
+
+/* Mobile */
+
+@media (max-width: 700px) {
+
+    .container {
+        width: 95%;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    h1 {
+        font-size: 26px;
+    }
+
+    .winner-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .winner-growth {
+        font-size: 30px;
+    }
+
+    .chart-container {
+        height: 350px;
+    }
+
+}

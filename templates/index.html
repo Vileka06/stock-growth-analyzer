@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Top 10 Stock Growth Analyzer</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js DataLabels plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <div>
+            <h1>Top 10 Stock Growth Analyzer</h1>
+
+            <p>
+                Performance from 31 December 2025 to Today
+            </p>
+        </div>
+
+        <a href="/" class="refresh-btn">
+            ↻ Refresh Data
+        </a>
+    </header>
+
+
+    <!-- Summary -->
+    {% if highest %}
+
+    <div class="winner-card">
+
+        <div>
+            <span class="small-title">
+                🏆 Highest Growth
+            </span>
+
+            <h2>{{ highest.name }}</h2>
+
+            <p>{{ highest.symbol }}</p>
+        </div>
+
+        <div class="winner-growth">
+            {{ "+" if highest.growth_pct >= 0 }}{{ highest.growth_pct }}%
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- Stock Table -->
+    <section class="card">
+
+        <div class="section-title">
+            <h2>Top 10 Stock Performance</h2>
+
+            <span>
+                Updated {{ current_date }}
+            </span>
+        </div>
+
+        {% if stocks %}
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Company</th>
+                        <th>Symbol</th>
+                        <th>31 Dec 2025</th>
+                        <th>Latest Price</th>
+                        <th>Growth</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for stock in stocks %}
+
+                    <tr>
+
+                        <td>
+                            <div class="rank">
+                                {{ loop.index }}
+                            </div>
+                        </td>
+
+                        <td>
+                            <strong>{{ stock.name }}</strong>
+                        </td>
+
+                        <td>
+                            <span class="symbol">
+                                {{ stock.symbol }}
+                            </span>
+                        </td>
+
+                        <td>
+                            ₹{{ stock.start_price }}
+                            <small>
+                                {{ stock.start_date.strftime("%d %b %Y") }}
+                            </small>
+                        </td>
+
+                        <td>
+                            ₹{{ stock.current_price }}
+                            <small>
+                                {{ stock.latest_date.strftime("%d %b %Y") }}
+                            </small>
+                        </td>
+
+                        <td>
+
+                            {% if stock.growth_pct >= 0 %}
+
+                                <span class="growth positive">
+                                    +{{ stock.growth_pct }}%
+                                </span>
+
+                            {% else %}
+
+                                <span class="growth negative">
+                                    {{ stock.growth_pct }}%
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if stock.growth_pct >= 0 %}
+
+                                <span class="status positive-bg">
+                                    ↑ Positive
+                                </span>
+
+                            {% else %}
+
+                                <span class="status negative-bg">
+                                    ↓ Negative
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="error">
+            Unable to retrieve stock data.
+            Please check your internet connection and try again.
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- BAR GRAPH -->
+    {% if stocks %}
+
+    <section class="card chart-card">
+
+        <div class="section-title">
+
+            <div>
+                <h2>📊 Top 10 Companies – Percentage Growth</h2>
+
+                <p>
+                    Higher bars indicate better performance
+                </p>
+            </div>
+
+        </div>
+
+        <div class="chart-container">
+
+            <canvas id="growthChart"></canvas>
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- Calculation -->
+    <section class="calculation">
+
+        <h3>How Growth Is Calculated</h3>
+
+        <p>
+            Percentage Growth =
+        </p>
+
+        <div class="formula">
+            ((Latest Price − Starting Price)
+            ÷ Starting Price) × 100
+        </div>
+
+        <p class="note">
+            If 31 December 2025 was not a trading day,
+            the nearest previous available trading day's
+            closing price is used.
+        </p>
+
+    </section>
+
+
+</div>
+
+
+{% if stocks %}
+
+<script>
+    // Sort stocks by growth for the chart - highest at top
+    const stocks = [
+        {% for stock in stocks %}
+            {
+                "name": "{{ stock.name }}",
+                "symbol": "{{ stock.symbol }}",
+                "growth": {{ stock.growth_pct }}
+            }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    // Reverse so highest growth is first (top of horizontal chart)
+    stocks.reverse();
+
+    const companyNames = stocks.map(s => s.name);
+    const growthValues = stocks.map(s => s.growth);
+
+    const ctx = document.getElementById("growthChart");
+
+    const barColors = growthValues.map((value, index) => {
+        if (value >= 0) {
+            return "#00e5a8";
+        }
+        return "#ff637d";
+    });
+
+    // Highlight #1 company with a slightly different color
+    const highlightedColors = growthValues.map((value, index) => {
+        if (index === 0) {
+            return "#00b395";
+        }
+        if (value >= 0) {
+            return "#00e5a8";
+        }
+        return "#ff637d";
+    });
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: companyNames,
+            datasets: [{
+                label: "Percentage Growth",
+
+                data: growthValues,
+                backgroundColor: highlightedColors,
+
+                borderRadius: 4,
+                borderSkipped: false,
+
+                // Show percentage value at end of bar via datalabels
+                datalabels: {
+                    anchor: 'end',
+                    align: 'end',
+                    color: '#000',
+                    font: {
+                        weight: 'bold',
+                        size: 13
+                    },
+                    formatter: (value) => {
+                        if (value === 0 || value === undefined) return '';
+                        return `${value.toFixed(2)}%`;
+                    }
+                }
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+
+            plugins: {
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.raw;
+                            const name = context.label;
+                            const symbol = context.dataset.label || '';
+                            return `Company: ${name}<br>Symbol: ${symbol}<br>Growth: ${value.toFixed(2)}%`;
+                        }
+                    }
+                },
+
+                datalabels: {
+                    display: true,
+                    color: '#fff',
+                    anchor: 'end',
+                    align: 'end',
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    },
+                    formatter: (value) => {
+                        if (value === 0 || value === undefined) return '';
+                        return `${value.toFixed(2)}%`;
+                    }
+                }
+            },
+
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: "Percentage Growth (%)"
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + "%";
+                        }
+                    }
+                },
+
+                x: {
+                    title: {
+                        display: true,
+                        text: "Companies"
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+{% endif %}
+
+</body>
+</html>
